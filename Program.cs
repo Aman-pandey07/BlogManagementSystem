@@ -15,9 +15,9 @@ builder.Services.AddOpenApi();
 
 //injecting dbcontext options
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
 
 //here we are adding identity 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(option =>
@@ -70,7 +70,10 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+
 app.UseHttpsRedirection();
+//this is initialization of the authentication in the middelware 
+app.UseAuthentication();
 
 app.UseAuthorization();
 

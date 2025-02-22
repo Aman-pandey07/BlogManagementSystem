@@ -165,9 +165,6 @@ namespace BlogManagementSystem.Migrations
                     b.Property<int>("BlogId")
                         .HasColumnType("int");
 
-                    b.Property<int>("BlogModelBlogId")
-                        .HasColumnType("int");
-
                     b.Property<string>("CommentContent")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -178,14 +175,11 @@ namespace BlogManagementSystem.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserModelUserId")
-                        .HasColumnType("int");
-
                     b.HasKey("CommentId");
 
-                    b.HasIndex("BlogModelBlogId");
+                    b.HasIndex("BlogId");
 
-                    b.HasIndex("UserModelUserId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Comments");
                 });
@@ -379,14 +373,14 @@ namespace BlogManagementSystem.Migrations
                 {
                     b.HasOne("BlogManagementSystem.Models.BlogModel", "BlogModel")
                         .WithMany("CommentModels")
-                        .HasForeignKey("BlogModelBlogId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("BlogId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("BlogManagementSystem.Models.UserModel", "UserModel")
                         .WithMany("CommentModels")
-                        .HasForeignKey("UserModelUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("BlogModel");

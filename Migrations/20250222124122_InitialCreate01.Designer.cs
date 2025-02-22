@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlogManagementSystem.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250222081828_AuthMigration")]
-    partial class AuthMigration
+    [Migration("20250222124122_InitialCreate01")]
+    partial class InitialCreate01
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -92,6 +92,132 @@ namespace BlogManagementSystem.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("BlogManagementSystem.Models.BlogModel", b =>
+                {
+                    b.Property<int>("BlogId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BlogId"));
+
+                    b.Property<string>("BlogContent")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("BlogImage")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("BlogTitle")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CategoryModelCategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserModelUserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("BlogId");
+
+                    b.HasIndex("CategoryModelCategoryId");
+
+                    b.HasIndex("UserModelUserId");
+
+                    b.ToTable("Blogs");
+                });
+
+            modelBuilder.Entity("BlogManagementSystem.Models.CategoryModel", b =>
+                {
+                    b.Property<int>("CategoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CategoryId"));
+
+                    b.Property<string>("CategoryDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CategoryName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("CategoryId");
+
+                    b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("BlogManagementSystem.Models.CommentModel", b =>
+                {
+                    b.Property<int>("CommentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CommentId"));
+
+                    b.Property<int>("BlogId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CommentContent")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CommentCreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CommentId");
+
+                    b.HasIndex("BlogId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("BlogManagementSystem.Models.UserModel", b =>
+                {
+                    b.Property<int>("UserId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
+
+                    b.Property<DateTime>("UserCreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte[]>("UserDp")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("UserEmail")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("UserIsAuthor")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long?>("UserPhoneNumber")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -227,6 +353,44 @@ namespace BlogManagementSystem.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("BlogManagementSystem.Models.BlogModel", b =>
+                {
+                    b.HasOne("BlogManagementSystem.Models.CategoryModel", "CategoryModel")
+                        .WithMany("BlogModel")
+                        .HasForeignKey("CategoryModelCategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BlogManagementSystem.Models.UserModel", "UserModel")
+                        .WithMany("BlogModels")
+                        .HasForeignKey("UserModelUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CategoryModel");
+
+                    b.Navigation("UserModel");
+                });
+
+            modelBuilder.Entity("BlogManagementSystem.Models.CommentModel", b =>
+                {
+                    b.HasOne("BlogManagementSystem.Models.BlogModel", "BlogModel")
+                        .WithMany("CommentModels")
+                        .HasForeignKey("BlogId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("BlogManagementSystem.Models.UserModel", "UserModel")
+                        .WithMany("CommentModels")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("BlogModel");
+
+                    b.Navigation("UserModel");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -276,6 +440,23 @@ namespace BlogManagementSystem.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("BlogManagementSystem.Models.BlogModel", b =>
+                {
+                    b.Navigation("CommentModels");
+                });
+
+            modelBuilder.Entity("BlogManagementSystem.Models.CategoryModel", b =>
+                {
+                    b.Navigation("BlogModel");
+                });
+
+            modelBuilder.Entity("BlogManagementSystem.Models.UserModel", b =>
+                {
+                    b.Navigation("BlogModels");
+
+                    b.Navigation("CommentModels");
                 });
 #pragma warning restore 612, 618
         }

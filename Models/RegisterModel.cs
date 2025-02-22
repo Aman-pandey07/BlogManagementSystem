@@ -1,9 +1,12 @@
-﻿namespace BlogManagementSystem.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace BlogManagementSystem.Models
 {
     public class RegisterModel
     {
-        public string Name { get; set; }
-        public string Email { get; set; }
-        public string Password { get; set; }
+        public required string Name { get; set; }
+        [Key]
+        public required string Email { get; set; }
+        public required string Password { get; set; }
     }
 }

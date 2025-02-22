@@ -2,8 +2,8 @@
 
 namespace BlogManagementSystem.Data
 {
-    public class ApplicationUser :IdentityUser
+    public class ApplicationUser : IdentityUser
     {
-        public string Name { get; set; }
+        public required string Name { get; set; }
     }
 }
