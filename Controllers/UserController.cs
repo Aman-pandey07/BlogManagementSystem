@@ -1,5 +1,6 @@
 ﻿using BlogManagementSystem.Data;
-using BlogManagementSystem.Dtos;
+using BlogManagementSystem.Dtos.UserDtos;
+using BlogManagementSystem.Mappers;
 using BlogManagementSystem.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -20,26 +21,13 @@ namespace BlogManagementSystem.Controllers
         }
 
 
-        //we have to check once delete functionality after all controller ends research for the delete related functionalities and apply to all the controllers
-        //Till then the delete functionalitiies of all the controller is commented
-
-
         //Get All users 
         [HttpGet]
         public async Task<IActionResult> GetUsers()
         {
-            var users = await _db.User.Select(u => new UserDto
-            {
-                UserId = u.UserId,
-                UserName = u.UserName,
-                UserEmail = u.UserEmail,
-                UserPhoneNumber = u.UserPhoneNumber,
-                UserDp = u.UserDp ?? Array.Empty<byte>(),
-                UserIsAuthor = u.UserIsAuthor,
-                UserCreatedAt = u.UserCreatedAt
-            }).ToListAsync();
-
-            return Ok(users);
+            var users = await _db.User.ToListAsync();
+            var userDtos = users.Select(u => u.ToGetAllUserDto());
+            return Ok(userDtos);
         }
 
 
@@ -47,22 +35,13 @@ namespace BlogManagementSystem.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUserById(int id)
         {
-            var user = await _db.User.Select(u => new UserDto
-            {
-                UserId = u.UserId,
-                UserName = u.UserName,
-                UserEmail = u.UserEmail,
-                UserPhoneNumber = u.UserPhoneNumber,
-                UserDp = u.UserDp,
-                UserIsAuthor = u.UserIsAuthor,
-                UserCreatedAt = u.UserCreatedAt
-            }).FirstOrDefaultAsync(u => u.UserId == id);
+            var user = await _db.User.FindAsync(id);
 
             if (user == null)
             {
                 return NotFound();
             }
-            return Ok(user);
+            return Ok(user.ToGetAllUserDto());
         }
 
         //Register new user
@@ -72,15 +51,7 @@ namespace BlogManagementSystem.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var user = new UserModel
-            {
-                UserName = newUser.UserName,
-                UserEmail = newUser.UserEmail,
-                UserPhoneNumber = newUser.UserPhoneNumber,
-                UserDp = newUser.UserDp,
-                UserIsAuthor = newUser.UserIsAuthor,
-                UserCreatedAt = DateTime.UtcNow
-            };
+            var user = newUser.ToCreateUserDto();
 
             _db.User.Add(user);
 

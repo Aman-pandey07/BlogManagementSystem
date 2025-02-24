@@ -1,4 +1,4 @@
-﻿namespace BlogManagementSystem.Dtos
+﻿namespace BlogManagementSystem.Dtos.CategoryDtos
 {
     public class CategoryDto
     {

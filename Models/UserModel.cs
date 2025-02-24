@@ -13,7 +13,7 @@ namespace BlogManagementSystem.Models
 
         public long? UserPhoneNumber { get; set; }
 
-        public byte[]? UserDp { get; set; }
+        public string? UserDp { get; set; }
 
         public bool UserIsAuthor { get; set; }
 

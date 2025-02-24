@@ -1,4 +1,4 @@
-﻿namespace BlogManagementSystem.Dtos
+﻿namespace BlogManagementSystem.Dtos.BlogsDtos
 {
     public class BlogDto
     {
@@ -14,7 +14,7 @@
     {
         public string BlogTitle { get; set; }
         public string BlogContent { get; set; }
-        public byte [] BlogImage { get; set; }
+        public byte[] BlogImage { get; set; }
         public int UserId { get; set; }
     }
 
@@ -22,6 +22,6 @@
     {
         public string BlogTitle { get; set; }
         public string BlogContent { get; set; }
-        public byte [] BlogImage { get; set; }
+        public byte[] BlogImage { get; set; }
     }
 }

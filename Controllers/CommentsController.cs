@@ -1,5 +1,5 @@
 ﻿using BlogManagementSystem.Data;
-using BlogManagementSystem.Dtos;
+using BlogManagementSystem.Dtos.CommentsDtos;
 using BlogManagementSystem.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

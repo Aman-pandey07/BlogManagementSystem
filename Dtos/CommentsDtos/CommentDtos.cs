@@ -1,4 +1,4 @@
-﻿namespace BlogManagementSystem.Dtos
+﻿namespace BlogManagementSystem.Dtos.CommentsDtos
 {
     public class CommentDto
     {
