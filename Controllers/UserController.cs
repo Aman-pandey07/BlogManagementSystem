@@ -65,19 +65,20 @@ namespace BlogManagementSystem.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUserDetails(int id , [FromBody] UpdateUserDto updatedUser)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var user = await _db.User.FindAsync(id);
             if (user == null)
-                return NotFound();
+                return NotFound($"User with ID {id} not found.");
 
-            user.UserName = updatedUser.UserName;
-            user.UserEmail = updatedUser.UserEmail;
-            user.UserPhoneNumber = updatedUser.UserPhoneNumber;
-            user.UserDp = updatedUser.UserDp;
-            user.UserIsAuthor = updatedUser.UserIsAuthor;
+            // Use the mapper to update user data
+            user.UpdateUserModel(updatedUser);
 
+            _db.User.Update(user);
             await _db.SaveChangesAsync();
 
-            return Ok(user);
+            return NoContent();
         }
 
         ////Delete user

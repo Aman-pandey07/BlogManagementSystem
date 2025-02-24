@@ -30,5 +30,16 @@ namespace BlogManagementSystem.Mappers
                 UserCreatedAt = DateTime.Now,
             };
         }
+
+        public static void UpdateUserModel(this UserModel userModel, UpdateUserDto updateUser)
+        {
+            userModel.UserName = updateUser.UserName;
+            userModel.UserEmail = updateUser.UserEmail;
+            userModel.UserPhoneNumber = updateUser.UserPhoneNumber;
+            userModel.UserDp = updateUser.UserDp;
+            userModel.UserIsAuthor = updateUser.UserIsAuthor;
+        }
+
+
     }
 }
