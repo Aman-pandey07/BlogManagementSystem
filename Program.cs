@@ -83,3 +83,7 @@ app.UseDeveloperExceptionPage();
 app.MapControllers();
 
 app.Run();
+
+
+
+////remember Users is for application users and User is for the blog user
