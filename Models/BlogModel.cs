@@ -11,7 +11,7 @@ namespace BlogManagementSystem.Models
 
         public required string BlogContent { get; set; }
 
-        public byte[]? BlogImage { get; set; }
+        public string? BlogImage { get; set; }
 
         public required DateTime CreatedAt { get; set; }
 
@@ -26,12 +26,6 @@ namespace BlogManagementSystem.Models
         public int CategoryId { get; set; } //FK to category
 
         public required CategoryModel CategoryModel { get; set; } //Navigatin property to category
-
-
-
-
-
-
 
         public ICollection<CommentModel> CommentModels { get; set; } = new List<CommentModel>(); //one to many with comments
     }

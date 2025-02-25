@@ -1,5 +1,6 @@
 ﻿using BlogManagementSystem.Data;
 using BlogManagementSystem.Dtos.BlogsDtos;
+using BlogManagementSystem.Mappers;
 using BlogManagementSystem.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,97 +22,79 @@ namespace BlogManagementSystem.Controllers
 
         //Get all the blogs
         [HttpGet]
-        public async Task<IActionResult> GetAllBlogs()
+        public async Task<ActionResult<IEnumerable<GetBlogDto>>> GetAllBlogs()
         {
             var blogs = await _db.Blogs
-                .Select(b => new BlogDto
-                {
-                    BlogId = b.BlogId,
-                    BlogTitle = b.BlogTitle,
-                    BlogContent = b.BlogContent,
-                    BlogImage = b.BlogImage,
-                    CreatedAt = b.CreatedAt,
-                    UserId = b.UserId
-                }).ToListAsync();
+                .Include(b => b.UserModel)
+                .Include(b => b.CategoryModel)
+                .ToListAsync();
 
-            return Ok(blogs);
+            var blogDtos = blogs.Select(blog => blog.ToGetAllBlogDto()).ToList();
+            return Ok(blogDtos);
         }
 
         //Get the blog by id
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetBlogById(int id)
+        public async Task<ActionResult<GetBlogDto>> GetBlogById(int id)
         {
             var blog = await _db.Blogs
-               .Where(b => b.BlogId == id)
-               .Select(b => new BlogDto
-               {
-                   BlogId = b.BlogId,
-                   BlogTitle = b.BlogTitle,
-                   BlogContent = b.BlogContent,
-                   BlogImage = b.BlogImage,
-                   CreatedAt = b.CreatedAt,
-                   UserId = b.UserId
-               }).FirstOrDefaultAsync();
+                 .Include(b => b.UserModel)
+                 .Include(b => b.CategoryModel)
+                 .FirstOrDefaultAsync(b => b.BlogId == id);
 
             if (blog == null)
-                return NotFound();
+                return NotFound($"Blog with ID {id} not found.");
 
-            return Ok(blog);
+            var blogDto = blog.ToGetAllBlogDto();
+            return Ok(blogDto);
         }
 
         //Create new blog
         [HttpPost]
-        public async Task<IActionResult> CreateNewBlog([FromBody] CreateBlogDto dto)
+        public async Task<IActionResult> CreateNewBlog([FromBody] CreateBlogDto newBlog)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var user = await _db.Users.FindAsync(dto.UserId);
-            if (user == null)
-                return NotFound("User not found");
+            // Fetch UserModel from the UserModels table
+            var userModel = await _db.User.FirstOrDefaultAsync(u => u.UserId == newBlog.UserId);
+            if (userModel == null)
+                return NotFound($"User with ID {newBlog.UserId} not found.");
 
-            var category = await _db.Categories.FirstOrDefaultAsync(); // Assuming you have a default category
-            if (category == null)
-                return NotFound("Category not found");
 
-            var blog = new BlogModel
-            {
-                BlogTitle = dto.BlogTitle,
-                BlogContent = dto.BlogContent,
-                BlogImage = dto.BlogImage,
-                UserId = dto.UserId,
-                CreatedAt = DateTime.Now,
-                UserModel = new UserModel
-                {
-                    UserId = int.Parse(user.Id),
-                    UserName = user.UserName,
-                    UserEmail = user.Email,
-                    UserPhoneNumber = long.TryParse(user.PhoneNumber, out var phoneNumber) ? phoneNumber : (long?)null,
-                    UserDp = null, // Assuming you have a way to get the UserDp
-                    UserIsAuthor = true, // Assuming the user is an author
-                    UserCreatedAt = DateTime.Now // Assuming the user creation date is now
-                },
-                CategoryModel = category
-            };
+            // Fetch CategoryModel from Categories table
+            var categoryModel = await _db.Categories.FirstOrDefaultAsync(c => c.CategoryId == newBlog.CategoryId);
+            if (categoryModel == null)
+                return NotFound($"Category with ID {newBlog.CategoryId} not found.");
 
+
+            // Map DTO to BlogModel
+            var blog = newBlog.ToCreateBlogModel(userModel, categoryModel);
+
+            // Add and Save Blog
             _db.Blogs.Add(blog);
             await _db.SaveChangesAsync();
+
             return CreatedAtAction(nameof(GetBlogById), new { id = blog.BlogId }, blog);
         }
 
         //Update blog details
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateBlogDetails(int id , [FromBody] UpdateBlogDto dto)
+        public async Task<IActionResult> UpdateBlogDetails(int id, [FromBody] UpdateBlogDto updatedBlog)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var blog = await _db.Blogs.FindAsync(id);
             if (blog == null)
-                return NotFound();
+                return NotFound($"Blog with ID {id} not found.");
 
-            blog.BlogTitle = dto.BlogTitle;
-            blog.BlogContent = dto.BlogContent;
-            blog.BlogImage = dto.BlogImage;
+            blog.UpdateBlogModel(updatedBlog);
+
+            _db.Blogs.Update(blog);
             await _db.SaveChangesAsync();
-            return Ok(blog);
+
+            return NoContent();
         }
 
         ////Delete Blog
