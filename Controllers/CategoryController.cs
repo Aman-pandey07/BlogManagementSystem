@@ -2,12 +2,14 @@
 using BlogManagementSystem.Dtos.CategoryDtos;
 using BlogManagementSystem.Mappers;
 using BlogManagementSystem.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlogManagementSystem.Controllers
 {
+    //[Authorize]
     [Route("api/category")]
     [ApiController]
     public class CategoryController : ControllerBase
@@ -17,6 +19,20 @@ namespace BlogManagementSystem.Controllers
         public CategoryController(ApplicationDbContext db)
         {
             _db = db;
+        }
+
+
+        // Get category by ID
+        [HttpGet()]
+        public async Task<ActionResult<IEnumerable<GetAllCategoryDto>>> GetAllCategory()
+        {
+            var category = await _db.Categories
+                                         .Include(c => c.BlogModel).ToListAsync();
+;
+
+            var categoryDto = category.Select(c => c.ToGetAllCategoryDto()).ToList();
+
+            return Ok(categoryDto);
         }
 
 

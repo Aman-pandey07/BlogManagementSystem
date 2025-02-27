@@ -2,12 +2,14 @@
 using BlogManagementSystem.Dtos.BlogsDtos;
 using BlogManagementSystem.Mappers;
 using BlogManagementSystem.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlogManagementSystem.Controllers
 {
+    //[Authorize]
     [Route("api/blogs")]
     [ApiController]
     public class BlogController : ControllerBase

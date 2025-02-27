@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BlogManagementSystem.Controllers
 {
+    //[Authorize]
     [Route("api/users")]
     [ApiController]
     public class UserController : ControllerBase
