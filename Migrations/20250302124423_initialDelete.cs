@@ -5,7 +5,7 @@
 namespace BlogManagementSystem.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdatedTheImageType01 : Migration
+    public partial class initialDelete : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

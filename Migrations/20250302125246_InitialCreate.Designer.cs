@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlogManagementSystem.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250222124122_InitialCreate01")]
-    partial class InitialCreate01
+    [Migration("20250302125246_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -106,8 +106,8 @@ namespace BlogManagementSystem.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<byte[]>("BlogImage")
-                        .HasColumnType("varbinary(max)");
+                    b.Property<string>("BlogImage")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("BlogTitle")
                         .IsRequired()
@@ -116,23 +116,17 @@ namespace BlogManagementSystem.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
-                    b.Property<int>("CategoryModelCategoryId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserModelUserId")
-                        .HasColumnType("int");
-
                     b.HasKey("BlogId");
 
-                    b.HasIndex("CategoryModelCategoryId");
+                    b.HasIndex("CategoryId");
 
-                    b.HasIndex("UserModelUserId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Blogs");
                 });
@@ -198,8 +192,8 @@ namespace BlogManagementSystem.Migrations
                     b.Property<DateTime>("UserCreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<byte[]>("UserDp")
-                        .HasColumnType("varbinary(max)");
+                    b.Property<string>("UserDp")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserEmail")
                         .IsRequired()
@@ -357,13 +351,13 @@ namespace BlogManagementSystem.Migrations
                 {
                     b.HasOne("BlogManagementSystem.Models.CategoryModel", "CategoryModel")
                         .WithMany("BlogModel")
-                        .HasForeignKey("CategoryModelCategoryId")
+                        .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("BlogManagementSystem.Models.UserModel", "UserModel")
                         .WithMany("BlogModels")
-                        .HasForeignKey("UserModelUserId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -377,7 +371,7 @@ namespace BlogManagementSystem.Migrations
                     b.HasOne("BlogManagementSystem.Models.BlogModel", "BlogModel")
                         .WithMany("CommentModels")
                         .HasForeignKey("BlogId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("BlogManagementSystem.Models.UserModel", "UserModel")

@@ -64,7 +64,7 @@ namespace BlogManagementSystem.Controllers
 
         //Update user details
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUserDetails(int id , [FromBody] UpdateUserDto updatedUser)
+        public async Task<IActionResult> UpdateUserDetails(int id , [FromRoute] UpdateUserDto updatedUser)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -82,19 +82,28 @@ namespace BlogManagementSystem.Controllers
             return NoContent();
         }
 
-        ////Delete user
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeleteUser(int id)
-        //{
-        //    var user = await _db.User.FindAsync(id);
-        //    if (user == null)
-        //        return NotFound();
+        //Delete user
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteUser(int id)
+        {
+            var user = await _db.User
+                                    .Include(u => u.BlogModels)
+                                    .Include(u => u.CommentModels)
+                                    .FirstOrDefaultAsync(u => u.UserId == id);
 
-        //    _db.User.Remove(user);
-        //    await _db.SaveChangesAsync();
-        //    return NoContent();
-        //}
+            if (user == null)
+            {
+                return NotFound(new { message = "User not found.Or it Could be deleted " });
+            }
 
 
+            // Remove the user
+            _db.User.Remove(user);
+            await _db.SaveChangesAsync();
+
+            return Ok(new { message = "User deleted successfully." });
+        }
     }
+
+
 }

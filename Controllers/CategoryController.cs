@@ -82,24 +82,25 @@ namespace BlogManagementSystem.Controllers
             return Ok(category.ToGetAllCategoryDto());
         }
 
-        
 
-        //// Delete category
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeleteCategory(int id)
-        //{
-        //    var category = await _db.Categories.FindAsync(id);
 
-        //    if (category == null)
-        //    {
-        //        return NotFound();
-        //    }
+        // Delete category
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteCategory(int id)
+        {
+            var category = await _db.Categories.Include(x => x.BlogModel).FirstOrDefaultAsync(c => c.CategoryId == id);
+            
 
-        //    _db.Categories.Remove(category);
-        //    await _db.SaveChangesAsync();
+            if (category == null)
+            {
+                return NotFound();
+            }
 
-        //    return NoContent();
-        //}
+            _db.Categories.Remove(category);
+            await _db.SaveChangesAsync();
+
+            return NoContent();
+        }
 
 
     }

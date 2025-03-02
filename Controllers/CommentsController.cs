@@ -91,18 +91,18 @@ namespace BlogManagementSystem.Controllers
             return NoContent();
         }
 
-        //// Delete Comment
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeleteComment(int id)
-        //{
-        //    var comment = await _db.Comments.FindAsync(id);
-        //    if (comment == null)
-        //        return NotFound();
+        // Delete Comment
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteComment(int id)
+        {
+            var comment = await _db.Comments.FindAsync(id);
+            if (comment == null)
+                return NotFound();
 
-        //    _db.Comments.Remove(comment);
-        //    await _db.SaveChangesAsync();
-        //    return NoContent();
-        //}
+            _db.Comments.Remove(comment);
+            await _db.SaveChangesAsync();
+            return NoContent();
+        }
 
     }
 }

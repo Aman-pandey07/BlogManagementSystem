@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BlogManagementSystem.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate01 : Migration
+    public partial class PendingChanges : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -74,7 +74,7 @@ namespace BlogManagementSystem.Migrations
                     UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserEmail = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserPhoneNumber = table.Column<long>(type: "bigint", nullable: true),
-                    UserDp = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    UserDp = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserIsAuthor = table.Column<bool>(type: "bit", nullable: false),
                     UserCreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -197,25 +197,23 @@ namespace BlogManagementSystem.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     BlogTitle = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BlogContent = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BlogImage = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    BlogImage = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false),
-                    UserModelUserId = table.Column<int>(type: "int", nullable: false),
-                    CategoryId = table.Column<int>(type: "int", nullable: false),
-                    CategoryModelCategoryId = table.Column<int>(type: "int", nullable: false)
+                    CategoryId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Blogs", x => x.BlogId);
                     table.ForeignKey(
-                        name: "FK_Blogs_Categories_CategoryModelCategoryId",
-                        column: x => x.CategoryModelCategoryId,
+                        name: "FK_Blogs_Categories_CategoryId",
+                        column: x => x.CategoryId,
                         principalTable: "Categories",
                         principalColumn: "CategoryId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Blogs_User_UserModelUserId",
-                        column: x => x.UserModelUserId,
+                        name: "FK_Blogs_User_UserId",
+                        column: x => x.UserId,
                         principalTable: "User",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.Cascade);
@@ -239,7 +237,8 @@ namespace BlogManagementSystem.Migrations
                         name: "FK_Comments_Blogs_BlogId",
                         column: x => x.BlogId,
                         principalTable: "Blogs",
-                        principalColumn: "BlogId");
+                        principalColumn: "BlogId",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Comments_User_UserId",
                         column: x => x.UserId,
@@ -287,14 +286,14 @@ namespace BlogManagementSystem.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Blogs_CategoryModelCategoryId",
+                name: "IX_Blogs_CategoryId",
                 table: "Blogs",
-                column: "CategoryModelCategoryId");
+                column: "CategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Blogs_UserModelUserId",
+                name: "IX_Blogs_UserId",
                 table: "Blogs",
-                column: "UserModelUserId");
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_BlogId",

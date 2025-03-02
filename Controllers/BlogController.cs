@@ -99,18 +99,22 @@ namespace BlogManagementSystem.Controllers
             return NoContent();
         }
 
-        ////Delete Blog
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeleteBlog(int id)
-        //{
-        //    var blog = await _db.Blogs.FindAsync(id);
-        //    if (blog == null)
-        //        return NotFound();
+        //Delete Blog
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteBlog(int id)
+        {
+            var blog = await _db.Blogs
+                .Include(b => b.UserModel)
+                .Include(b => b.CategoryModel)
+                .FirstOrDefaultAsync(b => b.BlogId == id);
 
-        //    _db.Blogs.Remove(blog);
-        //    await _db.SaveChangesAsync();
-        //    return NoContent();
-        //}
+            if (blog == null)
+                return NotFound(new { message = "User not found.Or it Could be deleted " });
+
+            _db.Blogs.Remove(blog);
+            await _db.SaveChangesAsync();
+            return NoContent();
+        }
 
 
     }
